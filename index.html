@@ -155,13 +155,15 @@
                 
                 // Random animation durations for variety
                 const flybyDuration = Math.random() * 10 + 5; // 5-15 seconds
-                const twinkleDuration = Math.random() * 3 + 1; // 1-4 seconds
+                // Faster twinkling - some stars as fast as 0.3 seconds
+                const twinkleDuration = Math.random() * 2 + 0.3; // 0.3-2.3 seconds
                 
                 star.style.animationDuration = `${flybyDuration}s, ${twinkleDuration}s`;
                 
-                // Random animation delay so they don't all start at once
-                const flybyDelay = Math.random() * 10;
-                const twinkleDelay = Math.random() * 2;
+                // Start animations at random points in their cycle with negative delays
+                // This makes the starfield already in motion when page loads
+                const flybyDelay = -Math.random() * flybyDuration; // Negative delay to start mid-animation
+                const twinkleDelay = -Math.random() * twinkleDuration;
                 star.style.animationDelay = `${flybyDelay}s, ${twinkleDelay}s`;
                 
                 starfield.appendChild(star);
