@@ -12,50 +12,55 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            background-color: #01000a;
+            background-color: #01000a; /* A very dark blue, almost black */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: white;
         }
 
-        /* --- Starfield Canvas (Behind Everything) --- */
+        /* --- Starfield Canvas (Positioned behind everything) --- */
         #starfield {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            z-index: 1; /* Places it in the background */
         }
 
         /* --- Centered Content Container --- */
         .container {
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Ensures content is on top of the canvas */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             text-align: center;
-            color: white;
             padding: 1rem;
             box-sizing: border-box;
         }
 
         /* --- Main Title --- */
         h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-size: clamp(1.5rem, 4vw, 2.5rem); /* Responsive font size - made smaller */
             font-weight: 300;
-            color: #e0e0e0;
             letter-spacing: 2px;
             margin: 0 0 2rem 0;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+            /* Added gradient to match numbers */
+            background: linear-gradient(45deg, #a855f7, #ec4899, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(168, 85, 247, 0.3); /* Softer glow for the title */
         }
 
         /* --- Countdown Timer Wrapper --- */
         #countdown {
             display: flex;
             justify-content: center;
-            gap: 1.5rem; /* Increased gap for better spacing */
+            gap: 1.5rem; /* Space between time units */
             flex-wrap: wrap;
         }
 
@@ -69,26 +74,27 @@
 
         /* --- The Number Part of the Countdown --- */
         .time-unit span {
-            font-size: clamp(3.5rem, 15vw, 9rem);
+            font-size: clamp(3.5rem, 15vw, 9rem); /* Large, responsive font size for numbers */
             font-weight: bold;
             line-height: 1;
+            font-variant-numeric: tabular-nums; /* Ensures numbers have the same width and don't shift */
             /* Galaxy Gradient Colors */
             background: linear-gradient(45deg, #a855f7, #ec4899, #60a5fa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-fill-color: transparent;
-            /* Glow Effect */
+            /* Glow Effect using multiple text shadows */
             text-shadow: 0 0 8px rgba(236, 72, 153, 0.5), 
                          0 0 18px rgba(168, 85, 247, 0.4), 
                          0 0 30px rgba(96, 165, 250, 0.3);
-            animation: glow-pulse 4s ease-in-out infinite;
+            animation: glow-pulse 4s ease-in-out infinite; /* Pulsing glow animation */
         }
 
         /* --- The Label Part (Days, Hours, etc.) --- */
         .time-unit label {
             font-size: clamp(0.8rem, 2.5vw, 1.25rem);
-            color: #c7d2fe; /* A light indigo/blue */
+            color: #c7d2fe; /* A light indigo/blue for contrast */
             text-transform: uppercase;
             letter-spacing: 3px;
             margin-top: 0.75rem;
@@ -110,9 +116,10 @@
     </style>
 </head>
 <body>
-
+    <!-- Canvas for the starfield background animation -->
     <canvas id="starfield"></canvas>
 
+    <!-- Main content container -->
     <div class="container">
         <h1>Canada Christmas Trip</h1>
         <div id="countdown">
@@ -146,8 +153,8 @@
             const countdownContainer = document.getElementById('countdown');
             const titleEl = document.querySelector('h1');
 
-            // Set target date: December 19th 2025, 17:50 (5:50 PM) EST (e.g., Toronto/New York Time)
-            // The format "YYYY-MM-DDTHH:mm:ss-05:00" correctly sets the timezone to EST (UTC-5)
+            // Set target date: December 19th 2025, 17:50 (5:50 PM).
+            // Assuming a timezone in Canada, like EST (UTC-5). This makes the countdown accurate regardless of where you view it from.
             const targetDate = new Date("2025-12-19T17:50:00-05:00");
 
             function formatTime(time) {
@@ -158,6 +165,7 @@
                 const now = new Date();
                 const diff = targetDate - now;
 
+                // When the countdown is over
                 if (diff <= 0) {
                     countdownContainer.innerHTML = "<div class='time-unit' style='min-width: 100%;'><span style='font-size: clamp(3rem, 10vw, 8rem);'>Bon Voyage!</span></div>";
                     titleEl.textContent = "Enjoy your trip to Canada!";
@@ -165,11 +173,13 @@
                     return;
                 }
 
+                // Calculate time units
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
+                // Update the HTML elements
                 daysEl.textContent = String(days);
                 hoursEl.textContent = formatTime(hours);
                 minutesEl.textContent = formatTime(minutes);
@@ -186,7 +196,7 @@
 
             let stars = [];
             const numStars = 800;
-            const speed = 0.4; // Slower speed for a more majestic feel
+            const speed = 0.4; // Controls how fast the stars move forward
             let centerX, centerY;
 
             function resizeCanvas() {
@@ -196,17 +206,20 @@
                 centerY = canvas.height / 2;
             }
 
+            // Star class definition
             class Star {
                 constructor() {
                     this.reset();
                 }
 
+                // Reset star to a random position at the "back" of the 3D space
                 reset() {
                     this.x = (Math.random() - 0.5) * canvas.width * 1.5;
                     this.y = (Math.random() - 0.5) * canvas.height * 1.5;
                     this.z = Math.random() * canvas.width;
                 }
 
+                // Move the star closer to the viewer
                 update() {
                     this.z -= speed;
                     if (this.z < 1) {
@@ -214,16 +227,21 @@
                     }
                 }
 
+                // Draw the star on the 2D canvas
                 draw() {
+                    // Project the 3D position to a 2D screen position
                     const sx = (this.x / this.z) * centerX + centerX;
                     const sy = (this.y / this.z) * centerY + centerY;
 
+                    // Don't draw if it's off-screen
                     if (sx < 0 || sx > canvas.width || sy < 0 || sy > canvas.height) {
-                        return; // Don't draw if outside screen bounds
+                        return;
                     }
-
+                    
+                    // Radius gets bigger as the star gets closer (z decreases)
                     const radius = Math.max(0, (1 - this.z / canvas.width) * 2.5);
-                    const alpha = (1 - this.z / canvas.width) * (0.5 + Math.random() * 0.5); // Sparkle effect
+                    // Alpha (opacity) flickers to create a "sparkle" effect
+                    const alpha = (1 - this.z / canvas.width) * (0.5 + Math.random() * 0.5); 
                     
                     ctx.beginPath();
                     ctx.arc(sx, sy, radius, 0, Math.PI * 2);
@@ -232,6 +250,7 @@
                 }
             }
 
+            // Create all the stars
             function initStars() {
                 stars = [];
                 for (let i = 0; i < numStars; i++) {
@@ -239,21 +258,23 @@
                 }
             }
 
+            // The main animation loop
             function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas each frame
                 stars.forEach(star => {
                     star.update();
                     star.draw();
                 });
-                requestAnimationFrame(animate);
+                requestAnimationFrame(animate); // Loop forever
             }
 
+            // Handle window resizing
             window.addEventListener('resize', () => {
                 resizeCanvas();
-                initStars();
+                initStars(); // Re-initialize stars to fit new screen size
             });
 
-            // Initial setup
+            // Initial setup and launch
             resizeCanvas();
             initStars();
             animate();
@@ -261,3 +282,4 @@
     </script>
 </body>
 </html>
+
