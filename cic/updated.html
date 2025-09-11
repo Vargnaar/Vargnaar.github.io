@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Canada Christmas Trip Countdown</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: linear-gradient(to bottom, #00264d, #004080, #0066cc);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    .countdown {
+      display: flex;
+      gap: 1em;
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+    .countdown div {
+      background: rgba(0,0,0,0.4);
+      padding: 0.5em 1em;
+      border-radius: 10px;
+    }
+    #fun-countdown {
+      font-size: 1.5em;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+    }
+    #fun-countdown div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+    }
+    i {
+      color: #ffdd57;
+    }
+  </style>
+</head>
+<body>
+  <h1>Canada Christmas Trip</h1>
+  <div class="countdown">
+    <div id="days">0 Days</div>
+    <div id="hours">0 Hours</div>
+    <div id="minutes">0 Minutes</div>
+    <div id="seconds">0 Seconds</div>
+  </div>
+
+  <!-- Fun countdown section -->
+  <div id="fun-countdown">
+    <div><i class="fa-solid fa-leaf"></i><span id="fridays"></span></div>
+    <div><i class="fa-solid fa-tree"></i><span id="weekends"></span></div>
+    <div><i class="fa-solid fa-moon"></i><span id="sleeps"></span></div>
+    <div><i class="fa-solid fa-briefcase"></i><span id="workweeks"></span></div>
+  </div>
+
+  <script>
+    const targetDate = new Date("2025-12-25T00:00:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        document.querySelector("h1").textContent = "We're in Canada! 🎉";
+        document.querySelector(".countdown").innerHTML = '<div>Merry Christmas!</div>';
+        document.querySelector("#fun-countdown").innerHTML = "";
+        return;
+      }
+
+      // Main countdown
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      document.getElementById("days").textContent = days + " Days";
+      document.getElementById("hours").textContent = hours + " Hours";
+      document.getElementById("minutes").textContent = minutes + " Minutes";
+      document.getElementById("seconds").textContent = seconds + " Seconds";
+
+      // Fun countdowns
+      document.getElementById("sleeps").textContent = days + " sleeps left";
+
+      // Fridays left
+      let fridays = 0;
+      let temp = new Date(now);
+      while (temp < targetDate) {
+        if (temp.getDay() === 5) fridays++;
+        temp.setDate(temp.getDate() + 1);
+      }
+      document.getElementById("fridays").textContent = fridays + " Fridays left";
+
+      // Weekends left (count Saturdays)
+      let weekends = 0;
+      temp = new Date(now);
+      while (temp < targetDate) {
+        if (temp.getDay() === 6) weekends++;
+        temp.setDate(temp.getDate() + 1);
+      }
+      document.getElementById("weekends").textContent = weekends + " weekends left";
+
+      // Work weeks (approximate, based on weekdays)
+      const workweeks = Math.ceil(days / 5);
+      document.getElementById("workweeks").textContent = workweeks + " work weeks left";
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
